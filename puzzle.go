@@ -3,6 +3,7 @@ package dvmweb
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"path"
 	"path/filepath"
 	"strings"
@@ -147,6 +148,7 @@ func createInventory(imagesDir, videosDir string) (*Inventory, error) {
 
 // New create a new web app given a data source and some static directories.
 func New(dsn, imagesDir, videosDir string) (*App, error) {
+	log.Println("creating inventory")
 	inv, err := createInventory(imagesDir, videosDir)
 	if err != nil {
 		return nil, err
@@ -154,6 +156,7 @@ func New(dsn, imagesDir, videosDir string) (*App, error) {
 	if !inv.Ok() {
 		return nil, fmt.Errorf("incomplete inventory")
 	}
+	log.Println("setup db")
 	db, err := sqlx.Open("sqlite3", dsn)
 	if err != nil {
 		return nil, err
