@@ -92,10 +92,36 @@ func writeHeaderLogf(w http.ResponseWriter, statusCode int, s string, v ...inter
 func (h *Handler) CacheImageRedirect(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	iid := vars["iid"]
+	if len(iid) != 6 {
+		writeHeaderLogf(w, http.StatusBadRequest, "six digit image id expected, got %v", iid)
+		return
+	}
+	// The cached file name.
 	filename := filepath.Join(h.StaticDir, "cache", fmt.Sprintf("%s.jpg", iid))
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// Create cached version.
-		log.Println("creating cached image")
+		// Create cached version and put it under cache.
+
+		var images []CategorizedImage
+		var requested = []struct {
+			category string
+			imageid  string
+		}{
+			{"artifacts", iid[:2]},
+			{"people", iid[2:4]},
+			{"landscapes", iid[4:6]},
+		}
+		for _, req := range requested {
+			img, err := h.App.Inventory.ByCategoryAndIdentifier(req.category, req.imageid)
+			if err != nil {
+				writeHeaderLogf(w, http.StatusNotFound, "cannot locate %v: %v", category, err)
+				return
+			}
+			images = append(images, img)
+		}
+
+		resizeHeight := 300
+		imaging.Open
+
 		http.Redirect(w, r, fmt.Sprintf("/static/cache/%s.jpg", iid), http.StatusSeeOther)
 		return
 	}

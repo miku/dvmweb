@@ -42,6 +42,17 @@ func (inv *Inventory) NumAssets() int {
 	return len(inv.Images) + len(inv.Videos)
 }
 
+// ByCategoryAndIdentifier returns the image descriptor for a given category
+// and identifier.
+func (inv *Inventory) ByCategoryAndIdentifier(category, identifier string) (*CategorizedImage, error) {
+	for _, img := range inv.Images {
+		if img.Category == category && img.Identifier == identifier {
+			return &img, nil
+		}
+	}
+	return nil, fmt.Errorf("image not found: %s/%s", category, identifier)
+}
+
 // RandomImageIdentifier returns a random composite image identifier from
 // fixed categories (artifacts, people, landscape).
 func (inv *Inventory) RandomImageIdentifier() (rid string, err error) {
