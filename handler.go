@@ -108,7 +108,6 @@ func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {
 		// doing this too much" or similar.
 		time.Sleep(2 * time.Second)
 
-		// Prepare insert, TODO(miku): sqlx way of INSERT.
 		stmt := `INSERT INTO story (imageid, text, language, ip, flagged) values (?, ?, ?, ?, ?)`
 		result, err := h.App.db.Exec(stmt, iid, text, language, r.RemoteAddr, false)
 		if err != nil {
