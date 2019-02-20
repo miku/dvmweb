@@ -157,7 +157,6 @@ func New(dsn, imagesDir, videosDir string) (*App, error) {
 	if !inv.Ok() {
 		return nil, fmt.Errorf("incomplete inventory")
 	}
-	log.Println("setup db")
 	db, err := sqlx.Open("sqlite3", dsn)
 	if err != nil {
 		return nil, err
