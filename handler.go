@@ -8,20 +8,22 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"text/template"
 	"time"
 
 	"github.com/disintegration/imaging"
-	humanize "github.com/dustin/go-humanize"
 	"github.com/gorilla/mux"
 )
 
 // fmap default functions for templates. TODO(miku): cleanup.
 var fmap = template.FuncMap{
 	"upper": strings.ToUpper,
-	"ago":   humanize.Time,
+	"datefmt": func(t time.Time) string {
+		return t.Format("02.01.2006 15:04")
+	},
 	"clip": func(s string) string {
 		if len(s) > 50 {
 			return fmt.Sprintf("%s ...", s[:50])
@@ -42,7 +44,7 @@ type Handler struct {
 // ReadHandler reads a story, given a random (image) identifier, e.g. "121403" or similar.
 func (h *Handler) ReadHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	rid := vars["rid"]
+	iid := vars["iid"]
 	t, err := template.New("read.html").Funcs(fmap).ParseFiles("templates/read.html")
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
@@ -53,7 +55,7 @@ func (h *Handler) ReadHandler(w http.ResponseWriter, r *http.Request) {
 	err = h.App.db.Select(&stories, `
 	SELECT id, imageid, text, language, created
 	FROM story WHERE imageid = ?
-	ORDER BY created DESC`, rid)
+	ORDER BY created DESC`, iid)
 	if err != nil {
 		log.Printf("SQL failed: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -63,7 +65,7 @@ func (h *Handler) ReadHandler(w http.ResponseWriter, r *http.Request) {
 		RandomIdentifier string
 		Stories          []Story
 	}{
-		RandomIdentifier: rid,
+		RandomIdentifier: iid,
 		Stories:          stories,
 	}
 	if err := t.Execute(w, data); err != nil {
@@ -76,10 +78,10 @@ func (h *Handler) ReadHandler(w http.ResponseWriter, r *http.Request) {
 // WriteHandler creates a new story.
 func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	rid := vars["rid"]
+	iid := vars["iid"]
 
-	// Save new story to database.
 	if r.Method == "POST" {
+		// Save new story to database.
 		h.mu.Lock()
 		defer h.mu.Unlock()
 
@@ -88,27 +90,101 @@ func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {
 		// method, the following data can not be obtained form.
 		r.ParseForm()
 
-		text := strings.TrimSpace(f.Form.Get("story"))
+		text := strings.TrimSpace(r.Form.Get("story"))
+		language := r.Form.Get("language") // Assume form has sane default.
 
 		if len(text) == 0 {
 			writeHeaderLog(w, http.StatusNoContent, "no content")
 			return
 		}
-		if len(text) > 25000 {
+		if len(text) > 10000 {
 			writeHeaderLog(w, http.StatusBadRequest, "body exceeds limit")
 			return
 		}
+		// TODO(miku): Add spam detector from https://git.io/fhFUf.
+
 		// The ultimative rate limiter. Limits the amount postable to about
-		// 500M per day. TODO(miku): Lookup IP address and send back a "you are
+		// 400M per day. TODO(miku): Lookup IP address and send back a "you are
 		// doing this too much" or similar.
-		time.Sleep(4 * time.Second)
+		time.Sleep(2 * time.Second)
 
 		// Prepare insert, TODO(miku): sqlx way of INSERT.
+		stmt := `INSERT INTO story (imageid, text, language, ip, flagged) values (?, ?, ?, ?, ?)`
+		result, err := h.App.db.Exec(stmt, iid, text, language, r.RemoteAddr, false)
+		if err != nil {
+			writeHeaderLogf(w, http.StatusInternalServerError, "insert failed: %v", err)
+			return
+		}
+		lid, err := result.LastInsertId()
+		if err != nil {
+			writeHeaderLogf(w, http.StatusInternalServerError, "failed to get last insert id: %v", err)
+			return
+		}
+		log.Printf("last insert id was: %v", lid)
+		http.Redirect(w, r, fmt.Sprintf("/r/%s", iid), http.StatusSeeOther)
+		return
+	}
+
+	// Render form.
+	t, err := template.New("write.html").Funcs(fmap).ParseFiles("templates/write.html")
+	if t == nil || err != nil {
+		log.Printf("failed or missing template: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	var data = struct {
+		RandomIdentifier string
+	}{
+		RandomIdentifier: iid,
+	}
+	if err := t.Execute(w, data); err != nil {
+		log.Printf("render failed: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 }
 
 // StoryHandler links to a single story. One image can have multiple.
-func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	identifier, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		writeHeaderLog(w, http.StatusBadRequest, err)
+		return
+	}
+	t, err := template.New("story.html").Funcs(fmap).ParseFiles("templates/story.html")
+	if t == nil || err != nil {
+		log.Printf("failed or missing template: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	var story Story
+	err = h.App.db.Get(&story, `
+	SELECT id, imageid, text, language, created
+	FROM story WHERE id = ? LIMIT 1`, identifier)
+	if err != nil {
+		writeHeaderLogf(w, http.StatusInternalServerError, "SQL failed: %v", err)
+		return
+	}
+	// No story.
+	if story.Text == "" {
+		writeHeaderLogf(w, http.StatusNotFound, "missing story: %d", identifier)
+		return
+	}
+	var data = struct {
+		RandomIdentifier string
+		Story            Story
+	}{
+		RandomIdentifier: story.ImageIdentifier,
+		Story:            story,
+	}
+	if err := t.Execute(w, data); err != nil {
+		log.Printf("template err: %s", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
 
 // AboutHandler render information about the app.
 func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {

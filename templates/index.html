@@ -48,7 +48,7 @@
            Niederlausitz glauben an die Mittagsfrau, die um Punkt 12 Uhr zu den
            Bauern auf die Flachsfelder kommt und nur von ihnen ablässt, wenn
            sie ihr Geschichten erzählen. Schaffen sie das nicht bis eins, ist
-           der Kopf ab.  Diese Kombination von Flachs und "Flachsen" haben wir
+           der Kopf ab.  Diese Kombination von Flachs und <em>Flachsen</em> haben wir
            zum Anlass genommen, ein Geschichtenportal zu kreieren.  Inspiration
            für die eigenen Texte sind dabei jeweils drei Fotos aus dem reichen
            Fundus des Sorbischen Instituts Bautzen zur Flachsherstellung, die
@@ -56,7 +56,7 @@
            entwickeln, kleine Anekdoten, Märchen, was Ihr wollt. Du hast keine
            Idee, findest das Projekt aber gut und kannst ober-oder
            niedersorbisch? Dann hilf uns beim Übersetzen der Texte in andere
-           Sprachen! Und jetzt ran an die "Flachsmaschine"...
+           Sprachen! Und jetzt ran an die <em>Flachsmaschine</em>...
         </p>
         <video autoPlay
             poster="/c/{{ .RandomVideoIdentifier }}.jpg">
@@ -78,7 +78,7 @@
           </p>
 
         {{range .Stories}}
-          <a href="/r/{{ .ImageIdentifier }}">{{ .ImageIdentifier }}</a> {{ .Text | clip }} &mdash; <a href="/s/{{ .Identifier }}">{{ .Created | ago }}</a><br>
+          <a href="/r/{{ .ImageIdentifier }}">{{ .ImageIdentifier }}</a> {{ .Text | clip }} &mdash; <a href="/s/{{ .Identifier }}">{{ .Created | datefmt }}</a><br>
         {{end}}
         </div>
     </div>

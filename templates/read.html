@@ -43,7 +43,7 @@
       <div class="12 columns" style="margin-top: 2%">
         <h3><a href="/">Flachsmaschine</a> {{ .RandomIdentifier }}</h3>
 
-            <img src="/static/cache/{{ .RandomIdentifier }}.jpg" alt="">
+            <img src="/c/{{ .RandomIdentifier }}.jpg" alt="">
 
       </div>
     </div>
@@ -52,11 +52,11 @@
 
             <hr>
             {{range .Stories}}
-                 <p>{{ .Text }} &mdash; <a href="/s/{{ .Identifier }}">{{ .Created | ago }}</a></p>
+                 <p>{{ .Text }} &mdash; <a href="/s/{{ .Identifier }}">{{ .Created | datefmt }}</a></p>
                  <hr>
             {{end}}
 
-            <p>Eine weitere <a href="/w/{{ .RandomIdentifier }}">Geschichte hinzufügen</a> ... </p>
+            <p>Eine <a href="/w/{{ .RandomIdentifier }}">Geschichte hinzufügen</a> ... </p>
         </div>
     </div>
   </div>

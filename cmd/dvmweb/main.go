@@ -53,8 +53,11 @@ func main() {
 	// Server static assets of defined dir.
 	fs := http.FileServer(http.Dir(*staticDir))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
-
+	// Handlers.
 	r.HandleFunc("/c/{iid}.jpg", h.CacheImageRedirect)
+	r.HandleFunc("/w/{iid}", h.WriteHandler)
+	r.HandleFunc("/r/{iid}", h.ReadHandler)
+	r.HandleFunc("/s/{id}", h.StoryHandler)
 	r.HandleFunc("/", h.IndexHandler)
 	r.HandleFunc("/about", h.AboutHandler)
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
