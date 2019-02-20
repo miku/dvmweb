@@ -9,7 +9,9 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"text/template"
+	"time"
 
 	"github.com/disintegration/imaging"
 	humanize "github.com/dustin/go-humanize"
@@ -31,7 +33,9 @@ var fmap = template.FuncMap{
 // Handler implements HTTP request for reading, writing and rendering stories.
 // Has access to application and static directory for assets, e.g. cached images.
 type Handler struct {
-	App       *App
+	mu  sync.Mutex // Lock app and database access.
+	App *App
+
 	StaticDir string
 }
 
@@ -70,24 +74,74 @@ func (h *Handler) ReadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // WriteHandler creates a new story.
-func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	rid := vars["rid"]
+
+	// Save new story to database.
+	if r.Method == "POST" {
+		h.mu.Lock()
+		defer h.mu.Unlock()
+
+		// Parse url parameters passed, then parse the response packet for the
+		// POST body (request body) attention: If you do not call ParseForm
+		// method, the following data can not be obtained form.
+		r.ParseForm()
+
+		text := strings.TrimSpace(f.Form.Get("story"))
+
+		if len(text) == 0 {
+			writeHeaderLog(w, http.StatusNoContent, "no content")
+			return
+		}
+		if len(text) > 25000 {
+			writeHeaderLog(w, http.StatusBadRequest, "body exceeds limit")
+			return
+		}
+		// The ultimative rate limiter. Limits the amount postable to about
+		// 500M per day. TODO(miku): Lookup IP address and send back a "you are
+		// doing this too much" or similar.
+		time.Sleep(4 * time.Second)
+
+		// Prepare insert, TODO(miku): sqlx way of INSERT.
+	}
+}
 
 // StoryHandler links to a single story. One image can have multiple.
 func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {}
 
 // AboutHandler render information about the app.
-func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {
+	t, err := template.New("about.html").Funcs(fmap).ParseFiles("templates/about.html")
+	if t == nil || err != nil {
+		log.Printf("failed or missing template: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// Video identifier, random image identifier.
+	var vid, rid string
 
-// writeHeaderLog logs an error and writes HTTP status code to header.
-func writeHeaderLog(w http.ResponseWriter, statusCode int, v interface{}) {
-	log.Println(v)
-	w.WriteHeader(statusCode)
-}
+	if vid, err = h.App.Inventory.RandomVideoIdentifier(); err != nil {
+		writeHeaderLog(w, http.StatusInternalServerError, err)
+		return
+	}
+	if rid, err = h.App.Inventory.RandomImageIdentifier(); err != nil {
+		writeHeaderLog(w, http.StatusInternalServerError, err)
+		return
+	}
 
-// writeHeaderLog logs an error and writes HTTP status code to header.
-func writeHeaderLogf(w http.ResponseWriter, statusCode int, s string, v ...interface{}) {
-	log.Printf(s, v...)
-	w.WriteHeader(statusCode)
+	var data = struct {
+		RandomVideoIdentifier string
+		RandomIdentifier      string
+	}{
+		RandomVideoIdentifier: vid,
+		RandomIdentifier:      rid,
+	}
+	if err := t.Execute(w, data); err != nil {
+		log.Printf("render failed: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 // CacheImageRedirect is a helper handler, which creates an image on the fly, of just
@@ -203,4 +257,16 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+// writeHeaderLog logs an error and writes HTTP status code to header.
+func writeHeaderLog(w http.ResponseWriter, statusCode int, v interface{}) {
+	log.Println(v)
+	w.WriteHeader(statusCode)
+}
+
+// writeHeaderLog logs an error and writes HTTP status code to header.
+func writeHeaderLogf(w http.ResponseWriter, statusCode int, s string, v ...interface{}) {
+	log.Printf(s, v...)
+	w.WriteHeader(statusCode)
 }

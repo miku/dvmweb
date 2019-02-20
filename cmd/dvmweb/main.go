@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	listen    = flag.String("listen", "localhost:3000", "hostport to listen on")
+	listen    = flag.String("listen", "0.0.0.0:3000", "hostport to listen on")
 	logfile   = flag.String("log", "", "logfile or stderr if empty")
 	dsn       = flag.String("dsn", "data.db", "data source name, e.g. sqlite3 path")
 	imagesDir = flag.String("i", "static/images", "path to images, one subdirectory per category")
@@ -56,6 +56,7 @@ func main() {
 
 	r.HandleFunc("/c/{iid}.jpg", h.CacheImageRedirect)
 	r.HandleFunc("/", h.IndexHandler)
+	r.HandleFunc("/about", h.AboutHandler)
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/robots.txt", 302)
 	})
