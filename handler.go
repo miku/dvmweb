@@ -43,7 +43,13 @@ func (h *Handler) Read(w http.ResponseWriter, r *http.Request) {
 }
 
 // Write creates a new story.
-func (h *Handler) Write(w http.ResponseWriter, r *http.Request) {}
+func (h *Handler) Write(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	rid := vars["rid"]
+	if r.Method == "POST" {
+		// XXX(miku): implement storage.
+	}
+}
 
 // Story links to a single story. One image can have multiple.
 func (h *Handler) Story(w http.ResponseWriter, r *http.Request) {}
