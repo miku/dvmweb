@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Die virtuelle Mittagsfrau 2018</title>
+  <meta name="description" content="Die virtuelle Mittagsfrau">
+  <meta name="google-site-verification" content="u4EDx75CkRTooUVXMljA59OSne7zztkbw4zaaK16gyw" />
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/static/css/normalize.css">
+  <link rel="stylesheet" href="/static/css/skeleton.css">
+  <link rel="stylesheet" href="/static/css/main.css">
+
+  <style>
+      body {
+        font-family: "Helvetica", Arial;
+        font-size: 1.8em;
+      }
+  </style>
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/static/favicon.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <div class="row">
+      <div class="12 columns" style="margin-top: 2%">
+        <p style="line-height: 1.4em">
+
+            Willkommen im Reich der "Mittagsfrau"! Die Sorben in der Ober- und Niederlausitz glauben an die Mittagsfrau, die um Punkt 12 Uhr zu den Bauern auf die Flachsfelder kommt und nur von ihnen ablässt, wenn sie ihr Geschichten erzählen. Schaffen sie das nicht bis eins, ist der Kopf ab.
+            Diese Kombination von Flachs und "Flachsen" haben wir zum Anlass genommen, ein Geschichtenportal zu kreieren. Inspiration für die eigenen Texte sind dabei jeweils drei Fotos aus dem reichen Fundus des Sorbischen Instituts Bautzen zur Flachsherstellung, die willkürlich angezeigt werden. Daraus sollt Ihr eigene Ideen entwickeln, kleine Anekdoten, Märchen, was Ihr wollt. Du hast keine Idee, findest das Projekt aber gut und kannst ober-oder niedersorbisch? Dann hilf uns beim Übersetzen der Texte in andere Sprachen! Und jetzt ran an die "Flachsmaschine"...
+
+        </p>
+        <h3><a href="/">Die virtuelle Mittagsfrau</a></h3>
+
+        <video autoPlay
+            poster="/static/cache/{{ .RandomVideoIdentifier }}.jpg">
+            <source src="/static/videos/dvm-{{ .RandomVideoIdentifier }}.webm" type='video/webm; codecs="vp8.0, vorbis"'>
+            <source src="/static/videos/dvm-{{ .RandomVideoIdentifier }}.mp4" type='video/mp4; codecs="avc1.4D401E, mp4a.40.2"'>
+            <p>This is fallback content to display for user agents that do not support the video tag.</p>
+        </video>
+
+
+      </div>
+    </div>
+    <div class="row">
+        <div class="12 columns" style="margin-top: 3%">
+        <p><a href="/w/{{ .RandomVideoIdentifier }}">Start</a>
+          | <a href="/">Andere Fotos</a> |
+            <a href="/w/{{ .RandomIdentifier }}">Sofort schreiben</a></p>
+            <hr>
+        <p><a href="/r/{{ .RandomImageWithStory }}">Geschichten aus der Flachsmaschine</a>
+            <!-- oder <a href="/translate">versuche dich an einer Übersetzung</a>.-->
+          </p>
+
+        {{range .Stories}}
+          <a href="/r/{{ .ImageIdentifier }}">{{ .ImageIdentifier }}</a> {{ .Text | clip }} &mdash; <a href="/s/{{ .Identifier }}">{{ .Created | ago }}</a><br>
+        {{end}}
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="12 columns" style="margin-top: 3%">
+            Für <a href="https://codingdavinci.de/events/ost/">Coding da Vinci 2018</a> <a href="https://twitter.com/cvvfj/status/1007940808090226688">♡</a> &mdash;
+          <a href="/about">Über dieses Projekt</a> &mdash;
+          Von <a href="mailto:mannsorama@googlemail.com">Sophia Manns-Süßbrich</a>, <a href="http://github.com/miku">Martin Czygan</a>
+        </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

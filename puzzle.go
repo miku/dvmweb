@@ -27,8 +27,8 @@ type Inventory struct {
 	Videos []string
 }
 
-// Size returns the total number of items in inventory.
-func (inv *Inventory) Size() int {
+// NumAssets returns the total number of items in inventory.
+func (inv *Inventory) NumAssets() int {
 	return len(inv.Images) + len(inv.Videos)
 }
 
@@ -60,10 +60,11 @@ func (inv *Inventory) Ok() bool {
 
 // Story describes a minimal story.
 type Story struct {
-	Identifier      int
-	ImageIdentifier string
-	Text            string
-	Created         time.Time
+	Identifier      int       `db:"id"`
+	ImageIdentifier string    `db:"imageid"`
+	Text            string    `db:"text"`
+	Language        string    `db:"language"`
+	Created         time.Time `db:"created"`
 }
 
 // Application configuration and data access layer.
