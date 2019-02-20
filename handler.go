@@ -71,29 +71,57 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {}
 // AboutHandler render information about the app.
 func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {}
 
+// writeHeaderLog logs an error and writes HTTP status code to header.
+func writeHeaderLog(w http.ResponseWriter, statusCode int, v interface{}) {
+	log.Println(v)
+	w.WriteHeader(statusCode)
+}
+
+// writeHeaderLog logs an error and writes HTTP status code to header.
+func writeHeaderLogf(w http.ResponseWriter, statusCode int, s string, v ...interface{}) {
+	log.Printf(s, v...)
+	w.WriteHeader(statusCode)
+}
+
 // IndexHandler render the home page.
 func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("templates/index.html")
 	if t == nil || err != nil {
-		log.Printf("failed or missing template: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		writeHeaderLogf(w, http.StatusInternalServerError, "failed or missing template: %v", err)
 		return
 	}
+
 	var stories []Story
 	err = h.App.db.Select(&stories, `
 	SELECT id, imageid, text, language, created
 	FROM story ORDER BY created DESC LIMIT 100`)
 	if err != nil {
-		log.Printf("SQL failed: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		writeHeaderLogf(w, http.StatusInternalServerError, "SQL failed: %v", err)
 		return
 	}
+
+	// Video identifier, random image identifier.
+	var vid, rid string
+
+	if vid, err = h.App.Inventory.RandomVideoIdentifier(); err != nil {
+		writeHeaderLog(w, http.StatusInternalServerError, err)
+		return
+	}
+	if rid, err = h.App.Inventory.RandomImageIdentifier(); err != nil {
+		writeHeaderLog(w, http.StatusInternalServerError, err)
+		return
+	}
+
 	var data = struct {
 		Stories               []Story
 		RandomVideoIdentifier string
+		RandomIdentifier      string
+		RandomImageWithStory  string
 	}{
 		Stories:               stories,
-		RandomVideoIdentifier: "040223",
+		RandomVideoIdentifier: vid,
+		RandomIdentifier:      rid,
+		RandomImageWithStory:  "000000",
 	}
 	if err := t.Execute(w, data); err != nil {
 		log.Printf("render failed: %v", err)

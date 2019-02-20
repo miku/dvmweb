@@ -3,7 +3,7 @@ package dvmweb
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
+	"math/rand"
 	"path"
 	"path/filepath"
 	"strings"
@@ -21,10 +21,20 @@ type CategorizedImage struct {
 	Category   string
 }
 
-// Inventory lists all assets.
+// Inventory make images and videos accessible in various ways. The slices
+// contain the absolute path and a bit of derived information. This struct
+// exposes a few functions, that help to locate images by category, by
+// identifier and the like. TODO(miku): maybe categorize videos as well.
 type Inventory struct {
 	Images []CategorizedImage
 	Videos []string
+}
+
+// videoIdentifier returns the identifier of a video, given its path. Go from
+// /some/path/dvm-010303.mp4 to 010303.
+func videoIdentifier(p string) string {
+	b := strings.Replace(path.Base(p), "dvm-", "", -1)
+	return strings.Replace(b, path.Ext(b), "", -1)
 }
 
 // NumAssets returns the total number of items in inventory.
@@ -32,16 +42,42 @@ func (inv *Inventory) NumAssets() int {
 	return len(inv.Images) + len(inv.Videos)
 }
 
+// RandomImageIdentifier returns a random composite image identifier from
+// fixed categories (artifacts, people, landscape).
+func (inv *Inventory) RandomImageIdentifier() (rid string, err error) {
+	artifacts := inv.ByCategory("artifacts")
+	people := inv.ByCategory("people")
+	landscapes := inv.ByCategory("landscapes")
+
+	if len(artifacts) == 0 || len(people) == 0 || len(landscapes) == 0 {
+		return "", fmt.Errorf("incomplete image dirs, missing at one category")
+	}
+
+	return fmt.Sprintf("%s%s%s",
+		artifacts[rand.Intn(len(artifacts))].Identifier,
+		artifacts[rand.Intn(len(people))].Identifier,
+		artifacts[rand.Intn(len(landscapes))].Identifier), nil
+}
+
 // ByCategory returns image paths by category, empty list, if the category does not exist.
-func (inv *Inventory) ByCategory(category string) (paths []string) {
+func (inv *Inventory) ByCategory(category string) (images []CategorizedImage) {
 	for _, img := range inv.Images {
 		if img.Category == category {
-			paths = append(paths, img.Path)
+			images = append(images, img)
 		}
 	}
 	return
 }
 
+// RandomVideoIdentifier returns the id to a random video.
+func (inv *Inventory) RandomVideoIdentifier() (vid string, err error) {
+	if len(inv.Videos) == 0 {
+		return "", fmt.Errorf("no videos found")
+	}
+	return videoIdentifier(inv.Videos[rand.Intn(len(inv.Videos))]), nil
+}
+
+// Categories returns the unique image categories.
 func (inv *Inventory) Categories() (categories []string) {
 	m := make(map[string]struct{})
 	for _, img := range inv.Images {
@@ -53,9 +89,9 @@ func (inv *Inventory) Categories() (categories []string) {
 	return
 }
 
-// Ok checks if the inventory is somewhat usable.
+// Ok checks if the inventory is somewhat usable. Also, we want three categories at the moment.
 func (inv *Inventory) Ok() bool {
-	return len(inv.Images) > 10 && len(inv.Videos) > -1
+	return len(inv.Images) > 10 && len(inv.Videos) > 0 && len(inv.Categories()) == 3
 }
 
 // Story describes a minimal story.
@@ -72,7 +108,7 @@ type App struct {
 	db        *sqlx.DB
 	videosDir string
 	imagesDir string
-	inventory *Inventory
+	Inventory *Inventory
 }
 
 // subdirNames returns the names of direct subfolders.
@@ -110,7 +146,7 @@ func findImages(root, category string) (filenames []string, err error) {
 	return
 }
 
-// createInventory fixes images and video paths.
+// createInventory fixes images and video paths in an inventory.
 func createInventory(imagesDir, videosDir string) (*Inventory, error) {
 	subdirs, err := subdirNames(imagesDir)
 	if err != nil {
@@ -149,7 +185,6 @@ func createInventory(imagesDir, videosDir string) (*Inventory, error) {
 
 // New create a new web app given a data source and some static directories.
 func New(dsn, imagesDir, videosDir string) (*App, error) {
-	log.Println("creating inventory")
 	inv, err := createInventory(imagesDir, videosDir)
 	if err != nil {
 		return nil, err
@@ -165,13 +200,13 @@ func New(dsn, imagesDir, videosDir string) (*App, error) {
 		db:        db,
 		videosDir: videosDir,
 		imagesDir: imagesDir,
-		inventory: inv,
+		Inventory: inv,
 	}, nil
 }
 
 func (app *App) String() string {
 	return fmt.Sprintf("app with %d images in %d categories and %d videos",
-		len(app.inventory.Images),
-		len(app.inventory.Categories()),
-		len(app.inventory.Videos))
+		len(app.Inventory.Images),
+		len(app.Inventory.Categories()),
+		len(app.Inventory.Videos))
 }
