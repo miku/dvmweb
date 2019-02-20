@@ -13,3 +13,4 @@
 
 /data.db
 /dvmweb
+/static/cache/*.jpg

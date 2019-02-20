@@ -2,6 +2,8 @@ package dvmweb
 
 import (
 	"fmt"
+	"image"
+	"image/color"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/disintegration/imaging"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/gorilla/mux"
 )
@@ -101,7 +104,7 @@ func (h *Handler) CacheImageRedirect(w http.ResponseWriter, r *http.Request) {
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
 		// Create cached version and put it under cache.
 
-		var images []CategorizedImage
+		var cimgs []*CategorizedImage
 		var requested = []struct {
 			category string
 			imageid  string
@@ -113,14 +116,38 @@ func (h *Handler) CacheImageRedirect(w http.ResponseWriter, r *http.Request) {
 		for _, req := range requested {
 			img, err := h.App.Inventory.ByCategoryAndIdentifier(req.category, req.imageid)
 			if err != nil {
-				writeHeaderLogf(w, http.StatusNotFound, "cannot locate %v: %v", category, err)
+				writeHeaderLogf(w, http.StatusNotFound, "cannot locate %v: %v", req.category, err)
 				return
 			}
-			images = append(images, img)
+			cimgs = append(cimgs, img)
 		}
 
+		// Resize to this height.
 		resizeHeight := 300
-		imaging.Open
+		// Destination image.
+		dst := imaging.New(960, 300, color.NRGBA{0, 0, 0, 0})
+
+		// Iterate over images, resize and paste them into destination.
+		for i, cimg := range cimgs {
+			img, err := imaging.Open(cimg.Path)
+			if err != nil {
+				writeHeaderLogf(w, http.StatusInternalServerError, "cannot open image at: %v", cimg.Path)
+				return
+			}
+			img = imaging.Resize(img, 0, resizeHeight, imaging.Lanczos)
+			dst = imaging.Paste(dst, img, image.Pt(320*i, 0))
+		}
+
+		// Save to static cache dir, create the directory on the fly.
+		cacheDir := filepath.Join(h.StaticDir, "cache")
+		if err := os.MkdirAll(cacheDir, 0755); err != nil {
+			writeHeaderLogf(w, http.StatusInternalServerError, "cannot create cache dir at %s", cacheDir)
+			return
+		}
+		if err := imaging.Save(dst, filename); err != nil {
+			writeHeaderLogf(w, http.StatusInternalServerError, "cannot save image to %s", filename)
+			return
+		}
 
 		http.Redirect(w, r, fmt.Sprintf("/static/cache/%s.jpg", iid), http.StatusSeeOther)
 		return
