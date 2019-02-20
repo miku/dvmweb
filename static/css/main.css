@@ -1,10 +1,12 @@
 body {
-    background-color: white;
+    /* background-color: white; */
+    background-color: rgb(240, 240, 240);
 }
 
 .container {
     padding: 0px 15px 15px 15px;
-    background-color: rgb(240, 240, 240);
+    /* background-color: rgb(240, 240, 240); */
+    background-color: white;
     /* height:100vh; */
 }
 
