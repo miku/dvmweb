@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// fmap default functions for templates.
+// fmap default functions for templates. TODO(miku): cleanup.
 var fmap = template.FuncMap{
 	"upper": strings.ToUpper,
 	"ago":   humanize.Time,
