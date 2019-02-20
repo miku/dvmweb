@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -24,8 +26,10 @@ var fmap = template.FuncMap{
 }
 
 // Handler implements HTTP request for reading, writing and rendering stories.
+// Has access to application and static directory for assets, e.g. cached images.
 type Handler struct {
-	App *App
+	App       *App
+	StaticDir string
 }
 
 // ReadHandler reads a story, given a random (image) identifier, e.g. "121403" or similar.
@@ -83,6 +87,22 @@ func writeHeaderLogf(w http.ResponseWriter, statusCode int, s string, v ...inter
 	w.WriteHeader(statusCode)
 }
 
+// CacheImageRedirect is a helper handler, which creates an image on the fly, of just
+// redirects to the static location of the image.
+func (h *Handler) CacheImageRedirect(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	iid := vars["iid"]
+	filename := filepath.Join(h.StaticDir, "cache", fmt.Sprintf("%s.jpg", iid))
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		// Create cached version.
+		log.Println("creating cached image")
+		http.Redirect(w, r, fmt.Sprintf("/static/cache/%s.jpg", iid), http.StatusSeeOther)
+		return
+	}
+	// Redirect to static page.
+	http.Redirect(w, r, fmt.Sprintf("/static/cache/%s.jpg", iid), http.StatusSeeOther)
+}
+
 // IndexHandler render the home page.
 func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("templates/index.html")
@@ -103,10 +123,12 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	// Video identifier, random image identifier.
 	var vid, rid string
 
+	// For frontpage animation.
 	if vid, err = h.App.Inventory.RandomVideoIdentifier(); err != nil {
 		writeHeaderLog(w, http.StatusInternalServerError, err)
 		return
 	}
+	// For fallback image.
 	if rid, err = h.App.Inventory.RandomImageIdentifier(); err != nil {
 		writeHeaderLog(w, http.StatusInternalServerError, err)
 		return

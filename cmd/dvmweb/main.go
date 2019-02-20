@@ -2,9 +2,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -17,6 +19,7 @@ var (
 	dsn       = flag.String("dsn", "data.db", "data source name, e.g. sqlite3 path")
 	imagesDir = flag.String("i", "static/images", "path to images, one subdirectory per category")
 	videosDir = flag.String("v", "static/videos", "path to videos")
+	staticDir = flag.String("s", "static", "static dir")
 )
 
 func main() {
@@ -38,12 +41,20 @@ func main() {
 		defer f.Close()
 	}
 
+	// Make sure, static dir ends with a slash.
+	*staticDir = fmt.Sprintf("%s/", strings.TrimRight(*staticDir, "/"))
+
 	// Handler implement HTTP handlers for app.
-	h := dvmweb.Handler{App: app}
+	h := dvmweb.Handler{App: app, StaticDir: *staticDir}
 
 	// Setup routes.
 	r := mux.NewRouter()
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("static/"))))
+
+	// Server static assets of defined dir.
+	fs := http.FileServer(http.Dir(*staticDir))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static", fs))
+
+	r.HandleFunc("/c/{iid}.jpg", h.CacheImageRedirect)
 	r.HandleFunc("/", h.IndexHandler)
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/robots.txt", 302)
