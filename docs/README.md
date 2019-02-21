@@ -124,6 +124,6 @@ change. The data is stored in [sqlite](https://www.sqlite.org/index.html) and
 There is room for improvements and extensions, which could make this more
 dynamic, unexpected and fun.
 
-![](stacked.png)
+![](121815.jpg)
 
 
