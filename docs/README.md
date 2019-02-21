@@ -72,7 +72,7 @@ strip, with various offsets (we used 50). Also, the delay sequence will depend
 on the number of frame we want to generate, so the delay sequence if
 parameterized by the number of total frames. This delay is the then included in
 the roll of each strip. A python script took care of the image reading,
-resizing (and channel homogenisation), padding - [generator
+resizing, channel homogenisation and padding - [generator
 pipelines](https://brett.is/writing/about/generator-pipelines-in-python/) are
 beautiful. The [imageio](https://imageio.github.io/) package was a great
 discovery, as it made reading and writing images a breeze;
