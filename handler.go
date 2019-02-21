@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -316,6 +317,12 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Fallback to some image.
+	riws := "000000"
+	if len(stories) == 0 {
+		riws = stories[rand.Intn(len(stories))].ImageIdentifier
+	}
+
 	var data = struct {
 		Stories               []Story
 		RandomVideoIdentifier string
@@ -325,7 +332,7 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		Stories:               stories,
 		RandomVideoIdentifier: vid,
 		RandomIdentifier:      rid,
-		RandomImageWithStory:  "000000",
+		RandomImageWithStory:  riws,
 	}
 	if err := t.Execute(w, data); err != nil {
 		log.Printf("render failed: %v", err)
