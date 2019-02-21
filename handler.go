@@ -1,6 +1,7 @@
 package dvmweb
 
 import (
+	"database/sql"
 	"fmt"
 	"image"
 	"image/color"
@@ -164,6 +165,10 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
 	SELECT id, imageid, text, language, created
 	FROM story WHERE id = ? LIMIT 1`, identifier)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			writeHeaderLogf(w, http.StatusNotFound, "no such story")
+			return
+		}
 		writeHeaderLogf(w, http.StatusInternalServerError, "SQL failed: %v", err)
 		return
 	}
