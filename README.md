@@ -1,2 +1,3 @@
-# dvmcdv
-Web application for Die Virtuelle Mittagsfrau (Coding da Vinci 2018)
+# dvmweb
+
+Web application for Die Virtuelle Mittagsfrau (Coding da Vinci 2018).
