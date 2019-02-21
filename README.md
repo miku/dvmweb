@@ -2,6 +2,8 @@
 
 Web application for Die Virtuelle Mittagsfrau ([Coding da Vinci 2018](https://codingdavinci.de/events/ost/)).
 
+![](static/022117.jpg)
+
 ## We won a prize!
 
 Out of compentition. Thanks!
