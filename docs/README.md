@@ -36,10 +36,11 @@ ease-in and ease-out as well.
 ![](easing.png)
 
 While the [GIF spec](https://www.w3.org/Graphics/GIF/spec-gif89a.txt) allows
-for delays to be specified, it turned out, that browser are free to interpret
-the delays, or to set a minimum delay between frames arbitrarilty. This is not
-too practical. In order to simulate various delays, we create frames at a
-constant rate, but repeat a single frame more often to simulate delay.
+for delays to be specified, it turned out, that browsers are free to interpret
+the delays, or to set a minimum delay between frames arbitrarilty. To put it
+mildly, this is not too practical. In order to simulate various delays, we
+create frames at a constant rate, but repeat a single frame more often to
+simulate delay.
 
 Putting this all together, we can create a bandit sequence of delays for each
 strip, with various offsets (we used 50). Also, the delay sequence will depend
