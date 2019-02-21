@@ -3,8 +3,9 @@
 Most of the data was available, but we lacked some landscapes, which, after
 some digging, we found at the [Deutsche
 Fotothek](http://www.deutschefotothek.de/), an incredible source of historical
-imagary (they send you printed versions as well). We limited the images by
-grepping for names like *Sabrodt*, *Seidewinkel*, *Hoyerswerda* and
+imagery (they send you [printed versions as
+well](http://www.deutschefotothek.de/cms/gebuehren.xml)). We limited the images
+by grepping for names like *Sabrodt*, *Seidewinkel*, *Hoyerswerda* and
 [more](https://github.com/sophiamanns/virtuelle_mittagsfrau/blob/188c259e5bdde2239bdf6031f64e9c5d7d7d06d0/fotothek.go#L56-L70).
 
 Interestingly, the metadata only contains a link to a thumbnail, but with a bit
