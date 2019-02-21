@@ -38,8 +38,8 @@ The gif spec only knows frames and the resulting files were beyond pratical in
 size, 50MB or more. Thankfully, the mighty [ffmpeg](https://www.ffmpeg.org/) to
 the rescue, we can generate webm and mp4 versions of these animations, which
 are much smaller. It is also possbile to optimize the gifs, which we did
-selectively. The resulting webm files were about 1.4MB in size, about 3MB,
-which is still a lot, but much more manageable.
+selectively. The resulting webm files were about 1.4MB in size, the mp4 files
+about 3MB, which is still a lot, but much more manageable.
 
 We generated 7874 files, half webm, half mp4. The video tag allows to specify
 various formats as well as fallbacks. The generation of these files took a few
