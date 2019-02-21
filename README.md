@@ -42,4 +42,4 @@ $ ./dvmweb
 
 * Info, todo, data scraping and stuff: [https://github.com/sophiamanns/virtuelle_mittagsfrau](https://github.com/sophiamanns/virtuelle_mittagsfrau)
 * Web application: [https://github.com/miku/dvmweb](https://github.com/miku/dvmweb)
-
+* More on the [technical approach](docs/README.md)
