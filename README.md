@@ -1,6 +1,12 @@
 # dvmweb
 
-Web application for Die Virtuelle Mittagsfrau (Coding da Vinci 2018).
+Web application for Die Virtuelle Mittagsfrau ([Coding da Vinci 2018](https://codingdavinci.de/events/ost/)).
+
+## We won a prize!
+
+Out of compentition. Thanks!
+
+![](static/hPcd3Sx.jpg)
 
 ## Static files
 
