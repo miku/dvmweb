@@ -92,10 +92,10 @@ imgs = (pad_image(img, border=border, bordercolor=bordercolor) for img in imgs)
 ```
 
 The gif spec only knows frames and the resulting files were beyond pratical in
-size, 50MB or more. Thankfully, the mighty [ffmpeg](https://www.ffmpeg.org/) to
+size, 50MB or more. Thankfully, mighty [ffmpeg](https://www.ffmpeg.org/) to
 the rescue, we can generate webm and mp4 versions of these animations, which
-are much smaller. It is also possbile to optimize the gifs, which we did
-selectively. The resulting webm files were about 1.4MB in size, the mp4 files
+are much smaller (it is also possbile to optimize the gifs, which we did
+selectively). The resulting webm files were about 1.4MB in size, the mp4 files
 about 3MB, which is still a lot, but much more manageable.
 
 We generated 7874 files, half webm, half mp4. This is about 15% of the videos,
@@ -107,7 +107,7 @@ The web application is rather boring, it uses
 [mux](https://github.com/gorilla/mux) and apart from that mostly the standard
 library module for HTTP handling. There is a [image manipulation
 library](https://github.com/disintegration/imaging), which allows to resize and
-merge image of the fly fast.
+merge images on the fly quickly.
 
 ```go
 // Iterate over images, resize and paste them into destination.
