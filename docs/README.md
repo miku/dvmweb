@@ -1,6 +1,31 @@
 # Hacks
 
-Most of the data was available, but we lacked some landscapes, which, after
+![](027_Sorb_Flachs.jpg)
+
+> Flachsanbau und -verarbeitung
+
+> Der Flachs (auch Lein) gehört zu den ältesten Kulturpflanzen. In der
+Hauswirtschaft war er für die Herstellung von Leinwand unentbehrlich. Auch in
+der Lausitz wurde er in den vergangenen Jahrhunderten in recht großem Umfang
+angebaut. Die aufwendige Beschäftigung mit dem Flachs, mit dem Weben und
+Spinnen nahm viel Raum im Leben der ländlichen Bevölkerung ein und
+widerspiegelt sich nicht nur im materiellen Erbe, wie in Geräten und Kleidung,
+sondern auch im immateriellen Erbe wie dem Liedgut und in mythologischen
+Vorstellungen (Sage von der Mittagsfrau). Die Spinnstuben waren ein wichtiger
+sozialer und kultureller Ort der Dorfgemeinschaft.  *Spinnen und Weben wie in
+alten Zeiten* erfreut sich wieder einer gewissen Faszination. Darstellungen von
+Flachsanbau und -verarbeitung sind ein beliebtes Thema musealer Präsentationen.
+Im Gegensatz zu Gerätschaften als Museumsobjekt vermitteln Bilder einen
+intensiveren Eindruck vom Gebrauch und der Arbeit.  Im Bildarchiv des
+Sorbischen Instituts befinden sich zahlreiche Fotografien zum genannten Thema.
+Oft sind auf ihnen Frauen bei der Arbeit zu sehen. Während die dargestellte
+Arbeit einen zeitlichen Horizont vermittelt, sind die abgebildeten Frauen durch
+ihre Tracht eindeutig in einer bestimmten Region der sorbischen Lausitz zu
+verorten (um Hoyerswerda, Niederlausitz, Kirchspiel Schleife).
+
+----
+
+Most of the [data](https://speicherwolke.uni-leipzig.de/index.php/s/C99LbgXSSPdgFxV) was available, but we lacked some landscapes, which, after
 some digging, we found at the [Deutsche
 Fotothek](http://www.deutschefotothek.de/), an incredible source of historical
 imagery (they send you [printed versions as
