@@ -67,9 +67,9 @@ at [easings.net](https://easings.net/)):
 
 While the [GIF spec](https://www.w3.org/Graphics/GIF/spec-gif89a.txt) allows
 for delays to be specified, it turned out, that browsers are free to interpret
-the delays, or to set a minimum delay between frames arbitrarily. To put it
+these values, or to set a minimum delay between frames at will. To put it
 mildly, this is not too practical. In order to simulate various delays, we
-create frames at a constant rate, but repeat a single frame more often to
+create frames at a constant rate, but repeat a single frame multiple times to
 simulate delay.
 
 Putting this all together, we can create a bandit sequence of delays for each
