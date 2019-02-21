@@ -59,7 +59,7 @@ to be created beforehand, which is relatively easy. For the animation, we want
 to have some ease-in and ease-out as well (I learned, that
 [Cocoa](https://developer.apple.com/documentation/appkit/nsanimationcurve?language=objc)
 implements these for their UI). Here are few, from linear to quartic ease in,
-ease out:
+ease out (even more can be found at [easings.net](https://easings.net/)):
 
 ![](easing.png)
 
