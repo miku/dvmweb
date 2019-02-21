@@ -2,7 +2,7 @@
 
 ![](027_Sorb_Flachs.jpg)
 
-> Flachsanbau und -verarbeitung
+> **Flachsanbau und -verarbeitung**
 
 > Der Flachs (auch Lein) gehört zu den ältesten Kulturpflanzen. In der
 Hauswirtschaft war er für die Herstellung von Leinwand unentbehrlich. Auch in
