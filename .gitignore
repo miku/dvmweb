@@ -16,3 +16,4 @@
 /static/cache/*.jpg
 /static/videos/*.mp4
 /static/videos/*.webm
+/logs
