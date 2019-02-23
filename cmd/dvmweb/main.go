@@ -20,6 +20,8 @@ var (
 	imagesDir = flag.String("i", "static/images", "path to images, one subdirectory per category")
 	videosDir = flag.String("v", "static/videos", "path to videos")
 	staticDir = flag.String("s", "static", "static dir")
+
+	version = "dev"
 )
 
 func main() {
@@ -45,7 +47,7 @@ func main() {
 	*staticDir = fmt.Sprintf("%s/", strings.TrimRight(*staticDir, "/"))
 
 	// Handler implement HTTP handlers for app.
-	h := dvmweb.Handler{App: app, StaticDir: *staticDir}
+	h := dvmweb.Handler{App: app, StaticDir: *staticDir, Version: version}
 
 	// Setup routes.
 	r := mux.NewRouter()

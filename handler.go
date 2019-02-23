@@ -41,6 +41,7 @@ type Handler struct {
 	App *App
 
 	StaticDir string
+	Version   string
 }
 
 // ReadHandler reads a story, given a random (image) identifier, e.g. "121403" or similar.
@@ -214,9 +215,11 @@ func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {
 	var data = struct {
 		RandomVideoIdentifier string
 		RandomIdentifier      string
+		Version               string
 	}{
 		RandomVideoIdentifier: vid,
 		RandomIdentifier:      rid,
+		Version:               h.Version,
 	}
 	if err := t.Execute(w, data); err != nil {
 		log.Printf("render failed: %v", err)
@@ -333,11 +336,13 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		RandomVideoIdentifier string
 		RandomIdentifier      string
 		RandomImageWithStory  string
+		Version               string
 	}{
 		Stories:               stories,
 		RandomVideoIdentifier: vid,
 		RandomIdentifier:      rid,
 		RandomImageWithStory:  riws,
+		Version:               h.Version,
 	}
 	if err := t.Execute(w, data); err != nil {
 		log.Printf("render failed: %v", err)
