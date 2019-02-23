@@ -61,6 +61,7 @@ func main() {
 	r.HandleFunc("/r/{iid}", h.ReadHandler)
 	r.HandleFunc("/s/{id}", h.StoryHandler)
 	r.HandleFunc("/", h.IndexHandler)
+	r.HandleFunc("/rand", h.RandomRead)
 	r.HandleFunc("/about", h.AboutHandler)
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/robots.txt", 302)

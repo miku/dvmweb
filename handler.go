@@ -294,6 +294,16 @@ func (h *Handler) CacheImageRedirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/static/cache/%s.jpg", iid), http.StatusSeeOther)
 }
 
+// RandomRead redirects to a random read page.
+func (h *Handler) RandomRead(w http.ResponseWriter, r *http.Request) {
+	iid, err := h.App.Inventory.RandomImageIdentifier()
+	if err != nil {
+		writeHeaderLogf(w, http.StatusInternalServerError, "failed to find random image: %v", err)
+		return
+	}
+	http.Redirect(w, r, fmt.Sprintf("/r/%s", iid), http.StatusSeeOther)
+}
+
 // IndexHandler render the home page.
 func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("templates/index.html")
