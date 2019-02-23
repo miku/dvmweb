@@ -63,6 +63,9 @@ func main() {
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/robots.txt", 302)
 	})
+	r.HandleFunc("/humans.txt", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/static/humans.txt", 302)
+	})
 	http.Handle("/", r)
 
 	// Add middleware.
