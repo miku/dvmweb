@@ -106,7 +106,7 @@ func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		// TODO(miku): Add spam detector from https://git.io/fhFUf.
 
-		// The ultimative rate limiter. Limits the amount postable to about
+		// The ultimate rate limiter. Limits the amount postable to about
 		// 400M per day. TODO(miku): Lookup IP address and send back a "you are
 		// doing this too much" or similar.
 		time.Sleep(2 * time.Second)
