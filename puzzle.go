@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // CategorizedImage belongs to a category, path records the absolute path. The
@@ -114,7 +113,7 @@ type Story struct {
 	Created         time.Time `db:"created"`
 }
 
-// Application configuration and data access layer.
+// App configuration and data access layer.
 type App struct {
 	db        *sqlx.DB
 	videosDir string
