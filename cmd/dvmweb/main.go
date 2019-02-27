@@ -71,6 +71,7 @@ func main() {
 	r.HandleFunc("/humans.txt", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/static/humans.txt", 302)
 	})
+	r.NotFoundHandler = http.HandlerFunc(h.NotFoundHandler)
 	http.Handle("/", r)
 
 	// Add middleware.

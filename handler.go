@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"io"
 	"log"
 	"math/rand"
 	"net/http"
@@ -167,6 +168,7 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
 	FROM story WHERE id = ? LIMIT 1`, identifier)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			io.WriteString(w, "404 Not Found")
 			writeHeaderLogf(w, http.StatusNotFound, "no such story")
 			return
 		}
@@ -175,6 +177,7 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// No story.
 	if story.Text == "" {
+		io.WriteString(w, "404 Not Found")
 		writeHeaderLogf(w, http.StatusNotFound, "missing story: %d", identifier)
 		return
 	}
@@ -224,6 +227,34 @@ func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {
 	if err := t.Execute(w, data); err != nil {
 		log.Printf("render failed: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+// NotFoundHandler renders a 404 page.
+func (h *Handler) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
+	t, err := template.New("404.html").Funcs(fmap).ParseFiles("templates/404.html")
+	if t == nil || err != nil {
+		log.Printf("failed or missing template: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	var vid string
+
+	if vid, err = h.App.Inventory.RandomVideoIdentifier(); err != nil {
+		writeHeaderLog(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	var data = struct {
+		RandomVideoIdentifier string
+		Version               string
+	}{
+		RandomVideoIdentifier: vid,
+		Version:               h.Version,
+	}
+	if err := t.Execute(w, data); err != nil {
+		log.Printf("render failed: %v", err)
 		return
 	}
 }

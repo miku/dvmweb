@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>404 Not Found</title>
+  <meta name="description" content="Daten und Software für das Projekt.">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="/static/css/normalize.css">
+  <link rel="stylesheet" href="/static/css/skeleton.css">
+  <link rel="stylesheet" href="/static/css/main.css">
+
+  <style>
+      body {
+        font-family: "Helvetica", Arial;
+        font-size: 1.8em;
+      }
+  </style>
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/static/favicon.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <div class="row">
+      <div class="12 columns" style="margin-top: 2%">
+        <h3><a href="/">Die virtuelle Mittagsfrau</a> &mdash; 404 Seite nicht gefunden</h3>
+
+        <video autoPlay
+            poster="/c/{{ .RandomVideoIdentifier }}.jpg">
+            <source src="/static/videos/dvm-{{ .RandomVideoIdentifier }}.webm" type='video/webm; codecs="vp8.0, vorbis"'>
+            <source src="/static/videos/dvm-{{ .RandomVideoIdentifier }}.mp4" type='video/mp4; codecs="avc1.4D401E, mp4a.40.2"'>
+            <p>This is fallback content to display for user agents that do not support the video tag.</p>
+        </video>
+
+
+      </div>
+    </div>
+
+</div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
