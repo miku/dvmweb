@@ -17,3 +17,5 @@
 /static/videos/*.mp4
 /static/videos/*.webm
 /logs
+/packaging/deb/dvmweb/usr
+dvmweb*deb

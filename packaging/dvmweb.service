@@ -1,0 +1,15 @@
+[Unit]
+Description=DVM web application.
+Documentation=http://www.github.com/miku/dvmweb
+After=network.target
+
+[Service]
+Type=simple
+User=daemon
+WorkingDirectory=/tmp
+ExecStart=/usr/sbin/dvmweb
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
