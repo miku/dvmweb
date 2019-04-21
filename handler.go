@@ -157,7 +157,7 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
 		writeHeaderLog(w, http.StatusBadRequest, err)
 		return
 	}
-	t, err := template.New("story.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "templates/story.html"))
+	t, err := template.New("story.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "story.html"))
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
