@@ -8,6 +8,7 @@ dvmweb: cmd/dvmweb/main.go
 
 clean:
 	rm -f dvmweb
+	rm -f dvmweb_*.deb
 
 data.db:
 		sqlite3 $@ < createdb.sql
