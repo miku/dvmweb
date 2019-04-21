@@ -41,15 +41,16 @@ type Handler struct {
 	mu  sync.Mutex // Lock app and database access.
 	App *App
 
-	StaticDir string
-	Version   string
+	StaticDir    string
+	TemplatesDir string
+	Version      string
 }
 
 // ReadHandler reads a story, given a random (image) identifier, e.g. "121403" or similar.
 func (h *Handler) ReadHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	iid := vars["iid"]
-	t, err := template.New("read.html").Funcs(fmap).ParseFiles("templates/read.html")
+	t, err := template.New("read.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "read.html"))
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -129,7 +130,7 @@ func (h *Handler) WriteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render form.
-	t, err := template.New("write.html").Funcs(fmap).ParseFiles("templates/write.html")
+	t, err := template.New("write.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "write.html"))
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -156,7 +157,7 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
 		writeHeaderLog(w, http.StatusBadRequest, err)
 		return
 	}
-	t, err := template.New("story.html").Funcs(fmap).ParseFiles("templates/story.html")
+	t, err := template.New("story.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "templates/story.html"))
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -197,7 +198,7 @@ func (h *Handler) StoryHandler(w http.ResponseWriter, r *http.Request) {
 
 // AboutHandler render information about the app.
 func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.New("about.html").Funcs(fmap).ParseFiles("templates/about.html")
+	t, err := template.New("about.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "about.html"))
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -233,7 +234,7 @@ func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {
 
 // NotFoundHandler renders a 404 page.
 func (h *Handler) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.New("404.html").Funcs(fmap).ParseFiles("templates/404.html")
+	t, err := template.New("404.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "404.html"))
 	if t == nil || err != nil {
 		log.Printf("failed or missing template: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -337,7 +338,7 @@ func (h *Handler) RandomRead(w http.ResponseWriter, r *http.Request) {
 
 // IndexHandler render the home page.
 func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.New("index.html").Funcs(fmap).ParseFiles("templates/index.html")
+	t, err := template.New("index.html").Funcs(fmap).ParseFiles(filepath.Join(h.TemplatesDir, "index.html"))
 	if t == nil || err != nil {
 		writeHeaderLogf(w, http.StatusInternalServerError, "failed or missing template: %v", err)
 		return

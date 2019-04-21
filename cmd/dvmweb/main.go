@@ -16,12 +16,13 @@ import (
 )
 
 var (
-	listen    = flag.String("listen", "0.0.0.0:3000", "hostport to listen on")
-	logfile   = flag.String("log", "", "logfile or stderr if empty")
-	dsn       = flag.String("dsn", "data.db", "data source name, e.g. sqlite3 path")
-	imagesDir = flag.String("i", "static/images", "path to images, one subdirectory per category")
-	videosDir = flag.String("v", "static/videos", "path to videos")
-	staticDir = flag.String("s", "static", "static dir")
+	listen       = flag.String("listen", "0.0.0.0:3000", "hostport to listen on")
+	logfile      = flag.String("log", "", "logfile or stderr if empty")
+	dsn          = flag.String("dsn", "data.db", "data source name, e.g. sqlite3 path")
+	imagesDir    = flag.String("i", "static/images", "path to images, one subdirectory per category")
+	videosDir    = flag.String("v", "static/videos", "path to videos")
+	staticDir    = flag.String("s", "static", "static dir")
+	templatesDir = flag.String("t", "templates", "template dir")
 
 	version = "dev"
 )
@@ -49,7 +50,12 @@ func main() {
 	*staticDir = fmt.Sprintf("%s/", strings.TrimRight(*staticDir, "/"))
 
 	// Handler implement HTTP handlers for app.
-	h := dvmweb.Handler{App: app, StaticDir: *staticDir, Version: version}
+	h := dvmweb.Handler{
+		App:          app,
+		StaticDir:    *staticDir,
+		TemplatesDir: *templatesDir,
+		Version:      version,
+	}
 
 	// Setup routes.
 	r := mux.NewRouter()
