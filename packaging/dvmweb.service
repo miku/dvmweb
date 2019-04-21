@@ -7,7 +7,7 @@ After=network.target
 Type=simple
 User=daemon
 WorkingDirectory=/tmp
-ExecStart=/usr/sbin/dvmweb
+ExecStart=/usr/sbin/dvmweb -dsn /opt/dvmweb/data.db -i /opt/dvmweb/static/images -log /var/log/dvmweb.log -s /opt/dvmweb/static -v /opt/dvmweb/static/videos
 Restart=on-failure
 
 [Install]
