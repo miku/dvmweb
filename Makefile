@@ -4,7 +4,7 @@ TARGETS = dvmweb
 
 dvmweb: cmd/dvmweb/main.go
 	go get ./...
-	go build -ldflags "-X main.version=`git rev-parse --short HEAD`"  -o $@ $<
+	go build -ldflags "-X main.version=`git rev-parse --short HEAD`" -o $@ $<
 
 clean:
 	rm -f dvmweb
