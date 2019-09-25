@@ -369,7 +369,7 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Fallback to some image.
 	riws := "000000"
-	if len(stories) == 0 {
+	if len(stories) > 0 {
 		riws = stories[rand.Intn(len(stories))].ImageIdentifier
 	}
 
